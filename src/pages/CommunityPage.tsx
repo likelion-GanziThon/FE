@@ -47,7 +47,10 @@ export default function CommunityPage() {
               <SearchTypeField />
               <SearchTextField />
             </div>
-            <RegionFieldGroup />
+            <RegionFieldGroup
+              region1='region_1'
+              region2='region_2'
+            />
             <Button type='submit'>검색하기</Button>
           </FieldSet>
         </form>
