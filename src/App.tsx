@@ -15,6 +15,7 @@ import SignUpPage from './pages/auth/SignUpPage';
 
 //레이아웃
 import RootLayout from './layouts/RootLayout';
+import ProfileUpdatePage from '@/pages/ProfileUpdatePage';
 
 function App() {
   const router = createBrowserRouter([
@@ -31,6 +32,7 @@ function App() {
     },
     { path: 'post-create', element: <PostCreatePage /> },
     { path: 'profile/:userId', element: <ProfilePage /> },
+    { path: 'profile/:userId/update', element: <ProfileUpdatePage /> },
     { path: 'post/:category/:postId', element: <PostDetailPage /> },
 
     { path: 'login', element: <LoginPage /> },
