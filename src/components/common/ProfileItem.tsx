@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router';
 
 interface ProfileItemProps {
@@ -11,11 +12,10 @@ export default function ProfileItem({ name, imageUrl, userId }: ProfileItemProps
     <Link
       to={`/profile/${userId}`}
       className='flex items-center gap-3'>
-      <img
-        src={imageUrl}
-        alt='프로필 사진'
-        className='size-10 rounded-full border-2'
-      />
+      <Avatar className='size-10'>
+        <AvatarImage src={imageUrl} />
+        <AvatarFallback>profile</AvatarFallback>
+      </Avatar>
       <span className='text-muted-foreground'>{name}</span>
     </Link>
   );
