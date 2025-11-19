@@ -62,3 +62,6 @@ export interface GetPostsParams {
   sido?: string;
   sigungu?: string;
 }
+
+// 게시글 필터 타입 (무한스크롤)
+export type PostListFilters = Omit<GetPostsParams, 'page' | 'size'>;
