@@ -31,7 +31,7 @@ function App() {
     },
     { path: 'post-create', element: <PostCreatePage /> },
     { path: 'profile/:userId', element: <ProfilePage /> },
-    { path: 'post/:postId', element: <PostDetailPage /> },
+    { path: 'post/:category/:postId', element: <PostDetailPage /> },
 
     { path: 'login', element: <LoginPage /> },
     { path: 'sign-up', element: <SignUpPage /> },
