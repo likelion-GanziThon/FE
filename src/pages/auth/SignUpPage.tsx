@@ -1,8 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { useSignup } from '@/hooks/queries/useAuth';
+import { logOnDev } from '@/utils/logOnDev';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { toast } from 'sonner';
 
 type FormValues = {
   id: string;
@@ -11,10 +14,11 @@ type FormValues = {
 };
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       id: '',
@@ -23,10 +27,21 @@ export default function SignUpPage() {
     },
     mode: 'onChange',
   });
+  const { mutate: signUp, isPending } = useSignup({
+    onSuccess: () => {
+      toast.success('회원가입이 완료되었습니다.', { position: 'top-center' });
+      // 로그인 페이지로 이동
+      navigate('/login', { replace: true });
+    },
+    onError: (error) => {
+      logOnDev(error.message);
+      toast.error('회원가입 중 문제가 발생하였습니다.', { position: 'top-center' });
+    },
+  });
 
   //제출 핸들러
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    signUp(data);
   };
 
   return (
@@ -37,7 +52,7 @@ export default function SignUpPage() {
         className='px-10'>
         <FieldSet
           className='gap-6'
-          disabled={isSubmitting}>
+          disabled={isPending}>
           <Field data-invalid={!!errors.id}>
             <FieldLabel htmlFor='id'>아이디</FieldLabel>
             <Input
