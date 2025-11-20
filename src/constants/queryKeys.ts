@@ -12,4 +12,8 @@ export const QUERY_KEYS = {
       { page, size, ...filters },
     ],
   },
+  auth: {
+    all: ['auth'],
+    me: () => ['auth', 'me'],
+  },
 };
