@@ -3,6 +3,10 @@ import { Field, FieldError, FieldLabel, FieldSeparator, FieldSet } from '@/compo
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
+import { useLogin } from '@/hooks/queries/useAuth';
+import { toast } from 'sonner';
+import { logOnDev } from '@/utils/logOnDev';
+import GlobalLoader from '@/components/common/GlobalLoader';
 
 type FormValues = {
   id: string;
@@ -13,7 +17,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       id: '',
@@ -21,11 +25,22 @@ export default function LoginPage() {
     },
     mode: 'onChange',
   });
+  const { mutate: login, isPending } = useLogin({
+    onSuccess: () => {
+      toast.success('환영합니다.', { position: 'top-center' });
+    },
+    onError: (error) => {
+      logOnDev(error.message);
+      toast.error('아이디, 비밀번호를 확인해주세요.', { position: 'top-center' });
+    },
+  });
 
   //제출 핸들러
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    login(data);
   };
+
+  if (isPending) return <GlobalLoader />;
 
   return (
     <div className='flex min-h-screen flex-col'>
@@ -35,7 +50,7 @@ export default function LoginPage() {
         className='px-10'>
         <FieldSet
           className='gap-6'
-          disabled={isSubmitting}>
+          disabled={isPending}>
           <Field data-invalid={!!errors.id}>
             <FieldLabel htmlFor='id'>아이디</FieldLabel>
             <Input
