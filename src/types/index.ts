@@ -38,7 +38,7 @@ export interface Post {
   thumbnailUrl?: string;
 }
 
-// 게시글 목록 조회 요청 타입
+// 게시글 목록 조회 응답 타입
 export interface GetPostsResponse {
   content: Post[];
   page: number;
@@ -53,18 +53,13 @@ export interface GetPostsResponse {
 // 검색 타입
 export type SearchType = 'TITLE' | 'CONTENT';
 
-// 게시글 조회 파라미터 타입
-export interface GetPostsParams {
-  page?: number;
-  size?: number;
+// 게시글 필터 타입
+export interface Filters {
   searchType?: SearchType;
   keyword?: string;
   sido?: string;
   sigungu?: string;
 }
-
-// 게시글 필터 타입 (무한스크롤)
-export type PostListFilters = Omit<GetPostsParams, 'page' | 'size'>;
 
 // mutation 훅 콜백 함수 타입
 export type UseMutationCallback = {

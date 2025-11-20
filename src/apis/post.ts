@@ -1,7 +1,7 @@
 import { axiosInstance } from '@/apis/axiosInstance';
 import type {
   CreatePostRequest,
-  GetPostsParams,
+  Filters,
   GetPostsResponse,
   PostCategory,
   UpdatePostRequest,
@@ -69,14 +69,20 @@ export const deletePost = async ({ category, id }: DeletePostVariables): Promise
 
 interface GetPostsVariables {
   category: PostCategory;
-  params?: GetPostsParams;
+  page?: number;
+  size?: number;
+  filters?: Filters;
 }
 
 //게시글 조회 요청
 export const getPosts = async ({
   category,
-  params,
+  page,
+  size = 20,
+  filters,
 }: GetPostsVariables): Promise<GetPostsResponse> => {
-  const { data } = await axiosInstance.get(`/posts/${category}`, { params });
+  const { data } = await axiosInstance.get(`/posts/${category}`, {
+    params: { size, page, ...filters },
+  });
   return data;
 };
