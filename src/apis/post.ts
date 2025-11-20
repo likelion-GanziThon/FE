@@ -1,7 +1,7 @@
 import { axiosInstance } from '@/apis/axiosInstance';
 import type {
   CreatePostRequest,
-  GetPostsParams,
+  Filters,
   GetPostsResponse,
   PostCategory,
   UpdatePostRequest,
@@ -26,12 +26,18 @@ export const createPost = async (body: CreatePostRequest): Promise<void> => {
   await axiosInstance.post('/posts', formData);
 };
 
+interface UpdatePostVariables {
+  id: number;
+  currentCategory: PostCategory;
+  body: UpdatePostRequest;
+}
+
 //게시글 수정 요청
-export const updatePost = async (
-  id: number,
-  currentCategory: PostCategory,
-  body: UpdatePostRequest
-): Promise<void> => {
+export const updatePost = async ({
+  id,
+  currentCategory,
+  body,
+}: UpdatePostVariables): Promise<void> => {
   const formData = new FormData();
 
   formData.append('newCategory', body.newCategory);
@@ -51,16 +57,32 @@ export const updatePost = async (
   });
 };
 
+interface DeletePostVariables {
+  category: PostCategory;
+  id: number;
+}
+
 //게시글 삭제 요청
-export const deletePost = async (category: PostCategory, id: number): Promise<void> => {
+export const deletePost = async ({ category, id }: DeletePostVariables): Promise<void> => {
   await axiosInstance.delete(`/posts/${category}/${id}`);
 };
 
+interface GetPostsVariables {
+  category: PostCategory;
+  page?: number;
+  size?: number;
+  filters?: Filters;
+}
+
 //게시글 조회 요청
-export const getPosts = async (
-  category: PostCategory,
-  params?: GetPostsParams
-): Promise<GetPostsResponse> => {
-  const { data } = await axiosInstance.get(`/posts/${category}`, { params });
+export const getPosts = async ({
+  category,
+  page,
+  size = 20,
+  filters,
+}: GetPostsVariables): Promise<GetPostsResponse> => {
+  const { data } = await axiosInstance.get(`/posts/${category}`, {
+    params: { size, page, ...filters },
+  });
   return data;
 };
