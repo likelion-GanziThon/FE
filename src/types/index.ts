@@ -68,3 +68,17 @@ export type UseMutationCallback = {
   onMutate?: () => void;
   onSettled?: () => void;
 };
+
+//프로필 정보 타입
+export interface ProfileFields {
+  desiredArea: string | null;
+  desiredMoveInDate: string | null;
+  introduction: string | null;
+}
+
+// 유저 타입
+export interface User extends ProfileFields {
+  id: number;
+  nickname: string;
+  profileImageUrl: string;
+}
