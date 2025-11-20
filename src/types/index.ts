@@ -65,3 +65,11 @@ export interface GetPostsParams {
 
 // 게시글 필터 타입 (무한스크롤)
 export type PostListFilters = Omit<GetPostsParams, 'page' | 'size'>;
+
+// mutation 훅 콜백 함수 타입
+export type UseMutationCallback = {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+  onMutate?: () => void;
+  onSettled?: () => void;
+};
