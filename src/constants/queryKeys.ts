@@ -15,5 +15,6 @@ export const QUERY_KEYS = {
   auth: {
     all: ['auth'],
     me: () => ['auth', 'me'],
+    userProfile: (userId: number) => ['auth', 'profile', userId],
   },
 };

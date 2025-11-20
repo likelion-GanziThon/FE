@@ -10,31 +10,52 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
+import { useGetMe, useUpdateProfile } from '@/hooks/queries/useProfile';
+import { toast } from 'sonner';
+import { logOnDev } from '@/utils/logOnDev';
+import GlobalLoader from '@/components/common/GlobalLoader';
+import { useNavigate } from 'react-router';
 
 interface ProfileUpdateFormValues {
   image: File | null;
   previewImage: string;
   name: string;
-  region1: string;
-  region2: string;
-  date: string; // 2025-11-20
-  description: string;
+  region1: string | null;
+  region2: string | null;
+  date: string | null; // 2025-11-20
+  description: string | null;
 }
 
 export default function ProfileUpdatePage() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { data: user, isLoading } = useGetMe();
+  const { mutate: updateProfile, isPending } = useUpdateProfile({
+    onSuccess: () => {
+      toast.success('프로필 정보가 수정되었습니다.', { position: 'top-center' });
+      navigate(`/profile/${user?.id}`);
+    },
+    onError: (error) => {
+      logOnDev(error.message);
+      toast.error('프로필 수정 중 문제가 발생했습니다.', { position: 'top-center' });
+    },
+  });
+
+  // 명세서 양식에 맞추기
+  const areaParts = user?.desiredArea?.split(' ') || [];
+  const region1 = areaParts[0] || '';
+  const region2 = areaParts[1] || '';
 
   // 초기값은 기존 데이터를 받는다.
   const profileUpdateForm = useForm<ProfileUpdateFormValues>({
     defaultValues: {
       image: null,
-      previewImage: 'https://github.com/shadcn.png',
-      name: '기존 이름',
-      region1: '서울',
-      region2: '강남구',
-      date: '',
-      description:
-        ' 저는 어릴적부터~~는 어릴적부터~~는 어릴적부터~~는 어릴적부터~~는 어릴적부터~~는',
+      previewImage: `${import.meta.env.VITE_API_URL}${user?.profileImageUrl}`,
+      name: user?.nickname,
+      region1: region1,
+      region2: region2,
+      date: user?.desiredMoveInDate,
+      description: user?.introduction,
     },
   });
 
@@ -49,9 +70,19 @@ export default function ProfileUpdatePage() {
 
   // 제출 핸들러
   const onSubmit: SubmitHandler<ProfileUpdateFormValues> = (values) => {
-    console.log(values);
-    //폼 데이터 형식
+    const desiredArea = [values.region1, values.region2].join(' ');
+    const body = {
+      desiredArea: desiredArea,
+      desiredMoveInDate: values.date,
+      introduction: values.description,
+      profileImageUrl: values.image,
+    };
+    console.log(body);
+
+    updateProfile(body);
   };
+
+  if (isLoading || !user) return <GlobalLoader />;
 
   //TODO: 이미지 메모리 누수 작업
   return (
@@ -59,7 +90,7 @@ export default function ProfileUpdatePage() {
       <form
         onSubmit={profileUpdateForm.handleSubmit(onSubmit)}
         className='flex flex-col gap-10 p-8'>
-        <FieldSet>
+        <FieldSet disabled={isPending}>
           <div className='flex items-center gap-14'>
             <Controller
               name='image'

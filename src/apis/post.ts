@@ -23,7 +23,7 @@ export const createPost = async (body: CreatePostRequest): Promise<void> => {
     formData.append('images', image);
   });
 
-  await axiosInstance.post('/posts', formData);
+  await axiosInstance.post('/api/posts', formData);
 };
 
 interface UpdatePostVariables {
@@ -52,7 +52,7 @@ export const updatePost = async ({
     formData.append('images', image);
   });
 
-  await axiosInstance.put(`/posts/${id}`, formData, {
+  await axiosInstance.put(`/api/posts/${id}`, formData, {
     params: { category: currentCategory },
   });
 };
@@ -64,7 +64,7 @@ interface DeletePostVariables {
 
 //게시글 삭제 요청
 export const deletePost = async ({ category, id }: DeletePostVariables): Promise<void> => {
-  await axiosInstance.delete(`/posts/${category}/${id}`);
+  await axiosInstance.delete(`/api/posts/${category}/${id}`);
 };
 
 interface GetPostsVariables {
@@ -81,7 +81,7 @@ export const getPosts = async ({
   size = 20,
   filters,
 }: GetPostsVariables): Promise<GetPostsResponse> => {
-  const { data } = await axiosInstance.get(`/posts/${category}`, {
+  const { data } = await axiosInstance.get(`/api/posts/${category}`, {
     params: { size, page, ...filters },
   });
   return data;

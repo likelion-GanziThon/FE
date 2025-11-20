@@ -5,9 +5,10 @@ import {
   SheetHeader,
   SheetTrigger,
   SheetClose,
+  SheetTitle,
+  SheetDescription,
 } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-import logo from '@/assets/react.svg';
 
 import {
   NavigationMenu,
@@ -17,6 +18,10 @@ import {
 } from '@/components/ui/navigation-menu';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useGetMe } from '@/hooks/queries/useProfile';
+import GlobalLoader from '@/components/common/GlobalLoader';
 
 const nav = [
   {
@@ -42,6 +47,8 @@ const nav = [
 ];
 
 export default function RootHeader() {
+  const { data: user, isPending } = useGetMe();
+  if (isPending) return <GlobalLoader />;
   return (
     <>
       <header className='flex justify-end bg-gray-300 pb-6'>
@@ -72,14 +79,21 @@ export default function RootHeader() {
           </SheetTrigger>
           <SheetContent className='w-1/2 sm:hidden'>
             <SheetHeader className='gap-4'>
-              <div className='m-auto size-20 rounded-full border border-black'>
-                <img
-                  src={logo}
-                  alt='프로필'
-                  className='h-full w-full'
-                />
-              </div>
-              <div className='text-center text-xl'>임재준</div>
+              <SheetTitle className='sr-only'>메뉴</SheetTitle>
+              <SheetDescription className='sr-only'>메뉴 목록입니다.</SheetDescription>
+              <Link to={`/profile/${user?.id}`}>
+                <Avatar className='mx-auto size-20'>
+                  <AvatarImage
+                    src={
+                      user?.profileImageUrl.startsWith('http')
+                        ? user.profileImageUrl
+                        : `${import.meta.env.VITE_API_URL}${user?.profileImageUrl}`
+                    }
+                  />
+                  <AvatarFallback>profile</AvatarFallback>
+                </Avatar>
+              </Link>
+              <div className='text-center text-xl'>{user?.nickname}</div>
               <Button>글쓰기</Button>
             </SheetHeader>
             <nav className='flex flex-col justify-center gap-4 px-4'>
