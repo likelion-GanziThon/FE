@@ -1,5 +1,5 @@
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
-import { Field } from './ui/field';
+import { Field, FieldError } from './ui/field';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { REGION_1_OPTIONS, REGIONS } from '@/constants/regions';
 
@@ -22,8 +22,9 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
       <Controller
         control={control}
         name={region1}
-        render={({ field }) => (
-          <Field>
+        rules={{ required: '시/도를 선택해주세요.' }}
+        render={({ field, fieldState: { error } }) => (
+          <Field data-invalid={!!error}>
             <Select
               value={field.value}
               onValueChange={(value) => {
@@ -32,7 +33,9 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
               }}
               name={field.name} // type이 여기 들어간다.
             >
-              <SelectTrigger className='w-full'>
+              <SelectTrigger
+                className='w-full'
+                aria-invalid={!!error}>
                 <SelectValue placeholder='지역 선택(시)' />
               </SelectTrigger>
               <SelectContent>
@@ -45,19 +48,23 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
                 ))}
               </SelectContent>
             </Select>
+            {!!error && <FieldError errors={[error]} />}
           </Field>
         )}
       />
       <Controller
         control={control}
         name={region2}
-        render={({ field }) => (
-          <Field>
+        rules={{ required: '구/군을 선택해주세요.' }}
+        render={({ field, fieldState: { error } }) => (
+          <Field data-invalid={!!error}>
             <Select
               value={field.value}
               onValueChange={field.onChange}
               name={field.name}>
-              <SelectTrigger className='w-full'>
+              <SelectTrigger
+                className='w-full'
+                aria-invalid={!!error}>
                 <SelectValue placeholder='지역 선택(구)' />
               </SelectTrigger>
               <SelectContent>
@@ -70,6 +77,7 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
                 ))}
               </SelectContent>
             </Select>
+            {!!error && <FieldError errors={[error]} />}
           </Field>
         )}
       />
