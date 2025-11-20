@@ -14,7 +14,7 @@ interface BasePostFormFields {
   sidoCode?: string;
   sigunguCode?: string;
   openchatUrl?: string;
-  images?: File[];
+  images?: File[] | null;
 }
 
 // 생성 요청
