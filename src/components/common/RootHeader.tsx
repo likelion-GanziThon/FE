@@ -9,13 +9,6 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Menu } from 'lucide-react';
-
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-} from '@/components/ui/navigation-menu';
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 
@@ -52,32 +45,11 @@ export default function RootHeader() {
   return (
     <>
       <header className='flex justify-end bg-gray-300 pb-6'>
-        <NavigationMenu
-          className='hidden w-full max-w-none sm:flex'
-          // max-w-none을 줘야 너비가 들어난다.
-        >
-          <NavigationMenuList
-            className='gap-5'
-            // flex-wrap : 한 줄에 다 안 들어가면 다음 줄로 내려가게
-          >
-            {nav.map((item) => (
-              <NavigationMenuItem key={item.label}>
-                <NavigationMenuLink asChild>
-                  <Link to={item.path}>
-                    <div className=''>{item.label}</div>
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
-        <Sheet
-        //뷰포트 ≥ 768px일 때 안 보임
-        >
-          <SheetTrigger className='sm:hidden'>
+        <Sheet>
+          <SheetTrigger className=''>
             <Menu className='m-4 size-7' />
           </SheetTrigger>
-          <SheetContent className='w-1/2 sm:hidden'>
+          <SheetContent className='w-1/2'>
             <SheetHeader className='gap-4'>
               <SheetTitle className='sr-only'>메뉴</SheetTitle>
               <SheetDescription className='sr-only'>메뉴 목록입니다.</SheetDescription>
@@ -94,7 +66,9 @@ export default function RootHeader() {
                 </Avatar>
               </Link>
               <div className='text-center text-xl'>{user?.nickname}</div>
-              <Button>글쓰기</Button>
+              <Button asChild>
+                <Link to={'/post-create'}>글쓰기</Link>
+              </Button>
             </SheetHeader>
             <nav className='flex flex-col justify-center gap-4 px-4'>
               {nav.map((item) => (
