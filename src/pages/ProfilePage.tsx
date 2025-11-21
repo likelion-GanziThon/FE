@@ -8,11 +8,11 @@ import { Link, useParams } from 'react-router';
 export default function ProfilePage() {
   const { userId } = useParams();
 
-  const { data: user } = useGetOtherProfile(Number(userId));
+  const { data: user, isLoading: userLoading } = useGetOtherProfile(Number(userId));
 
-  const { data: me, isPending } = useGetMe();
+  const { data: me, isLoading: myLoading } = useGetMe();
 
-  if (isPending) return <GlobalLoader />;
+  if (myLoading || !me || !user || userLoading) return <GlobalLoader />;
   return (
     <div className='flex flex-col gap-10 p-8'>
       <div className='flex items-center gap-14'>

@@ -8,6 +8,7 @@ interface ProfileItemProps {
 }
 
 export default function ProfileItem({ name, imageUrl, userId }: ProfileItemProps) {
+  console.log(imageUrl);
   return (
     <Link
       to={`/profile/${userId}`}
