@@ -5,9 +5,10 @@ import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useDeleteComment } from '@/hooks/queries/useComment';
 import { useGetMe } from '@/hooks/queries/useProfile';
 import type { PostCategory } from '@/types';
+import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface ProfileItemProps {
+interface CommentCardProps {
   name: string;
   imageUrl: string;
   userId: number;
@@ -25,42 +26,57 @@ export default function CommentCard({
   commentId,
   postId,
   category,
-}: ProfileItemProps) {
-  const { data: user } = useGetMe(); // 나의 댓글과 비교하는 로직
-  const { mutate: deleteComment } = useDeleteComment({
+}: CommentCardProps) {
+  const { data: user } = useGetMe();
+
+  const { mutate: deleteComment, isPending } = useDeleteComment({
     onSuccess: () => {
       toast.success('댓글이 삭제되었습니다.', { position: 'bottom-center' });
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.post.detail(category, postId),
       });
     },
+    onError: () => {
+      toast.error('댓글 삭제에 실패했습니다.');
+    },
   });
 
-  const handleDelte = () => {
-    deleteComment(commentId);
+  const handleDelete = () => {
+    if (window.confirm('정말 이 댓글을 삭제하시겠습니까?')) {
+      deleteComment(commentId);
+    }
   };
 
   return (
-    <div className='rounded-2xl border-2 p-4'>
-      <div className='gpa-2 flex justify-between'>
+    <div className='group relative flex w-full flex-col gap-1 px-5 py-4 transition-colors hover:bg-gray-50/80'>
+      <div className='flex items-start justify-between gap-2'>
+        {/* 프로필 정보 (ProfileItem 재사용) */}
         <ProfileItem
           name={name}
           imageUrl={imageUrl}
           userId={userId}
         />
 
+        {/* 작성자 본인일 경우 삭제 버튼 노출 */}
         {user?.id === userId && (
-          <div className='flex items-center gap-2'>
-            <Button
-              className='h-5 w-10 text-xs'
-              variant={'destructive'}
-              onClick={handleDelte}>
-              삭제
-            </Button>
-          </div>
+          <Button
+            variant='ghost'
+            size='icon'
+            className='h-8 w-8 text-gray-400 transition-all hover:bg-red-50 hover:text-red-500'
+            onClick={handleDelete}
+            disabled={isPending}
+            title='댓글 삭제'>
+            <Trash2 className='size-4' />
+          </Button>
         )}
       </div>
-      <p className='py-3'>{content}</p>
+
+      {/* 댓글 내용: 프로필 사진 너비(약 40~48px)만큼 들여쓰기하여 가독성 확보 */}
+      <div className='pl-12'>
+        <p className='text-[15px] leading-relaxed break-all whitespace-pre-wrap text-gray-800'>
+          {content}
+        </p>
+      </div>
     </div>
   );
 }

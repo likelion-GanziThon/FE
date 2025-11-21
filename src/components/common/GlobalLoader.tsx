@@ -1,15 +1,15 @@
-import logo from '@/assets/react.svg';
+import home from '@/assets/home.png';
 
 function GlobalLoader() {
   return (
-    <div className='bg-muted flex h-screen w-screen items-center justify-center'>
-      <div className='flex animate-bounce gap-5'>
+    <div className='flex h-screen items-center justify-center'>
+      <div className='flex animate-bounce items-center gap-5'>
         <img
-          src={logo}
+          src={home}
           alt='logo'
-          className='w-10'
+          className='w-15'
         />
-        <div className='text-2xl font-bold'>로딩 중입니다~</div>
+        <div className='text-3xl font-bold'>로딩 중입니다~</div>
       </div>
     </div>
   );

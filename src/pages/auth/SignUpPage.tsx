@@ -1,11 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { Field, FieldError, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { useSignup } from '@/hooks/queries/useAuth';
 import { logOnDev } from '@/utils/logOnDev';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
+import homeLogo from '@/assets/home.png';
 
 type FormValues = {
   id: string;
@@ -44,7 +45,14 @@ export default function SignUpPage() {
 
   return (
     <div className='flex min-h-screen flex-col'>
-      <div className='px-20 py-15 text-center text-5xl'>홈메이트</div>
+      <div className='flex items-center justify-center gap-5 px-20 py-20'>
+        <img
+          src={homeLogo}
+          alt='logo'
+          className='w-15'
+        />
+        <span className='text-3xl font-bold'>홈메이트</span>
+      </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='px-10'>
@@ -52,7 +60,7 @@ export default function SignUpPage() {
           className='gap-6'
           disabled={isPending}>
           <Field data-invalid={!!errors.id}>
-            <FieldLabel htmlFor='id'>아이디</FieldLabel>
+            <FieldLabel htmlFor='id'>아이디 (닉네임)</FieldLabel>
             <Input
               id='id'
               aria-invalid={!!errors.id}
@@ -74,8 +82,12 @@ export default function SignUpPage() {
             {errors.password && <FieldError errors={[errors.password]} />}
           </Field>
 
-          <Button type='submit'>회원가입</Button>
-          <FieldSeparator />
+          <Button
+            type='submit'
+            className='w-1/2 self-center font-bold'>
+            회원가입
+          </Button>
+
           <Button
             variant={'link'}
             asChild>

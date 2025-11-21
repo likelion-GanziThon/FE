@@ -1,5 +1,14 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
+
+@font-face {
+  font-family: 'NanumBarunPen';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumBarunpen.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -39,6 +48,31 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-home:
+    'NanumBarunPen', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --color-home-brown-400: #4b4544;
+
+  /* HOME ORANGE */
+  --color-home-orange-100: #fff7f1;
+  --color-home-orange-200: #ffdec6;
+  --color-home-orange-300: #ffb884;
+  --color-home-orange-600: #ff6b57;
+
+  /* HOME RED */
+  --color-home-red-100: #ffdfdf;
+  --color-home-red-500: #ff5f5f;
+
+  /* HOME GRAY */
+  --color-home-gray-100: #f6f6f6;
+  --color-home-gray-200: #e2e8f0;
+  --color-home-gray-300: #d1d5db;
+  --color-home-gray-500: #6b7280;
+  --color-home-gray-600: #4b5563;
+  --color-home-gray-700: #374151;
+
+  --text-home-orange-600: #ff6b57;
 }
 
 :root {
@@ -115,6 +149,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-home;
   }
 }
