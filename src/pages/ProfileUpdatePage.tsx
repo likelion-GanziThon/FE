@@ -2,19 +2,29 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card'; // Card 컴포넌트 추가
 import { Controller, FormProvider, useForm, useWatch, type SubmitHandler } from 'react-hook-form';
-import { Camera, ChevronDownIcon } from 'lucide-react';
-import { Field, FieldError, FieldLabel, FieldSet } from '@/components/ui/field';
+import {
+  Camera,
+  ChevronDownIcon,
+  MapPin,
+  Calendar as CalendarIcon,
+  User,
+  PenLine,
+} from 'lucide-react';
+import { Field, FieldError, FieldSet } from '@/components/ui/field';
 import RegionFieldGroup from '@/components/RegionFieldGroup';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useGetMe, useUpdateProfile } from '@/hooks/queries/useProfile';
 import { toast } from 'sonner';
 import { logOnDev } from '@/utils/logOnDev';
 import GlobalLoader from '@/components/common/GlobalLoader';
 import { useNavigate } from 'react-router';
+import { queryClient } from '@/apis/queryClient';
+import { QUERY_KEYS } from '@/constants/queryKeys';
 
 interface ProfileUpdateFormValues {
   image: File | null;
@@ -22,7 +32,7 @@ interface ProfileUpdateFormValues {
   name: string;
   region1: string | null;
   region2: string | null;
-  date: string | null; // 2025-11-20
+  date: string | null;
   description: string | null;
 }
 
@@ -33,6 +43,12 @@ export default function ProfileUpdatePage() {
   const { mutate: updateProfile, isPending } = useUpdateProfile({
     onSuccess: () => {
       toast.success('프로필 정보가 수정되었습니다.', { position: 'bottom-center' });
+      if (user?.id) {
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.auth.userProfile(user.id),
+        });
+      }
+
       navigate(`/profile/${user?.id}`);
     },
     onError: (error) => {
@@ -50,8 +66,8 @@ export default function ProfileUpdatePage() {
   const profileUpdateForm = useForm<ProfileUpdateFormValues>({
     defaultValues: {
       image: null,
-      previewImage: `${import.meta.env.VITE_API_URL}${user?.profileImageUrl}`,
       name: user?.nickname,
+      previewImage: `${import.meta.env.VITE_API_URL}${user?.profileImageUrl}`,
       region1: region1,
       region2: region2,
       date: user?.desiredMoveInDate,
@@ -64,7 +80,6 @@ export default function ProfileUpdatePage() {
     register,
     formState: { errors },
     setValue,
-    reset,
   } = profileUpdateForm;
 
   const previewImage = useWatch({ control, name: 'previewImage' });
@@ -78,155 +93,193 @@ export default function ProfileUpdatePage() {
       introduction: values.description,
       profileImageUrl: values.image,
     };
-
+    console.log(body);
     updateProfile(body);
   };
-  useEffect(() => {
-    if (user) {
-      const areaParts = user.desiredArea?.split(' ') || [];
-
-      reset({
-        image: null, // 파일은 서버에서 받을 수 없으므로 null 유지
-        previewImage: `${import.meta.env.VITE_API_URL}${user.profileImageUrl}`,
-        name: user.nickname,
-        region1: areaParts[0] || '',
-        region2: areaParts[1] || '',
-        date: user.desiredMoveInDate,
-        description: user.introduction,
-      });
-    }
-  }, [user, reset]);
 
   if (isLoading || !user) return <GlobalLoader />;
 
-  //TODO: 이미지 메모리 누수 작업
   return (
-    <FormProvider {...profileUpdateForm}>
-      <form
-        onSubmit={profileUpdateForm.handleSubmit(onSubmit)}
-        className='flex flex-col gap-10 p-8'>
-        <FieldSet disabled={isPending}>
-          <div className='flex items-center gap-14'>
-            <Controller
-              name='image'
-              control={control}
-              render={({ field: { onChange } }) => (
-                <div className='flex flex-col gap-2'>
-                  <Avatar className='size-25'>
-                    <AvatarImage src={previewImage} />
-                    <AvatarFallback>profile</AvatarFallback>
-                  </Avatar>
-                  <Input
-                    type='file'
-                    className='hidden'
-                    accept='image/*' // 파일 선택 창에서 이미지 파일만 보이도록 필터링
-                    id='image' // 버튼 연결
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]; // blob URL 생성
-                      if (!file) return; // 이거 있어야 취소 눌렀을 때 기존 이미지가 유지된다.
+    <div className='animate-in fade-in slide-in-from-bottom-4 container mx-auto max-w-3xl duration-500'>
+      <FormProvider {...profileUpdateForm}>
+        <form onSubmit={profileUpdateForm.handleSubmit(onSubmit)}>
+          <div className='overflow-hidden border-none'>
+            {/* 1. 상단 배너 */}
+            <div className='relative h-32 bg-gradient-to-r from-orange-100 to-orange-50' />
+            <div className='px-8'>
+              <FieldSet
+                disabled={isPending}
+                className='space-y-8'>
+                {/* 2. 프로필 사진 및 닉네임 영역 */}
+                <div className='relative -mt-12 flex flex-col items-start gap-6 sm:flex-row sm:items-end'>
+                  {/* 이미지 업로드 */}
+                  <Controller
+                    name='image'
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                      <div className='group relative'>
+                        <Avatar className='border-background bg-background size-32 border-4 shadow-md'>
+                          <AvatarImage
+                            src={previewImage}
+                            className='object-cover'
+                          />
+                          <AvatarFallback>profile</AvatarFallback>
+                        </Avatar>
 
-                      onChange(file); // 파일 자체는 필드에 저장
-                      const blobURL = file ? URL.createObjectURL(file) : '';
-                      setValue('previewImage', blobURL); // // 폼 데이터용 데이터 변경
-                    }}
+                        {/* 카메라 아이콘 버튼 (오버레이 스타일) */}
+                        <Label
+                          htmlFor='image'
+                          className='absolute right-0 bottom-0 flex size-10 cursor-pointer items-center justify-center rounded-full border border-gray-100 bg-white text-gray-600 shadow-md transition-transform hover:scale-110 hover:text-orange-500'>
+                          <Camera className='size-5' />
+                        </Label>
+                        <Input
+                          type='file'
+                          className='hidden'
+                          accept='image/*'
+                          id='image'
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            onChange(file);
+                            const blobURL = URL.createObjectURL(file);
+                            setValue('previewImage', blobURL);
+                          }}
+                        />
+                      </div>
+                    )}
                   />
-                  <Button asChild>
+
+                  {/* 닉네임 입력 */}
+                  <div className='mb-2 w-full flex-1 space-y-2 sm:max-w-md'>
                     <Label
-                      htmlFor='image' // input file 연결
-                      className='rounded-2xl'>
-                      <Camera className='size-4' />
-                      변경
+                      htmlFor='name'
+                      className='text-muted-foreground ml-1 text-xs font-bold tracking-wider uppercase'>
+                      Nickname
                     </Label>
+                    <Field
+                      data-invalid={!!errors.name}
+                      className='space-y-1'>
+                      <div className='relative'>
+                        <Input
+                          id='name'
+                          readOnly
+                          aria-invalid={!!errors.name}
+                          type='text'
+                          placeholder='닉네임을 입력하세요'
+                          {...register('name', { required: '필수 항목입니다.' })}
+                          className='h-12 border-gray-200 pl-10 text-xl font-bold focus-visible:ring-orange-500'
+                        />
+                        <User className='text-muted-foreground absolute top-1/2 left-3 size-5 -translate-y-1/2' />
+                      </div>
+                      {errors.name && <FieldError errors={[errors.name]} />}
+                    </Field>
+                  </div>
+                </div>
+
+                {/* 3. 정보 입력 그리드 */}
+                <div className='grid gap-6'>
+                  <div className='grid gap-6 sm:grid-cols-2'>
+                    {/* 희망 거주 지역 */}
+                    <Card className='border-gray-100 bg-gray-50/50'>
+                      <CardContent className='space-y-3 p-5'>
+                        <div className='flex items-center gap-2 font-medium text-orange-600'>
+                          <MapPin className='size-4' />
+                          희망 거주 지역
+                        </div>
+                        <Field>
+                          <RegionFieldGroup
+                            region1='region1'
+                            region2='region2'
+                          />
+                        </Field>
+                      </CardContent>
+                    </Card>
+
+                    {/* 희망 입주 시기 */}
+                    <Card className='border-gray-100 bg-gray-50/50'>
+                      <CardContent className='space-y-3 p-5'>
+                        <div className='flex items-center gap-2 font-medium text-orange-600'>
+                          <CalendarIcon className='size-4' />
+                          희망 입주 시기
+                        </div>
+                        <Controller
+                          control={control}
+                          name='date'
+                          render={({ field: { value, onChange } }) => {
+                            const stringToDate = value ? new Date(value) : undefined;
+                            return (
+                              <Field className='w-full'>
+                                <Popover
+                                  open={open}
+                                  onOpenChange={setOpen}>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      variant='outline'
+                                      id='date'
+                                      className={`h-11 w-full justify-between bg-white ${!value && 'text-muted-foreground'}`}>
+                                      {value || '날짜 선택'}
+                                      <ChevronDownIcon className='size-4 opacity-50' />
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className='w-auto p-0'
+                                    align='start'>
+                                    <Calendar
+                                      mode='single'
+                                      selected={stringToDate}
+                                      captionLayout='dropdown'
+                                      onSelect={(data) => {
+                                        if (!data) return;
+                                        const year = data.getFullYear();
+                                        const month = String(data.getMonth() + 1).padStart(2, '0');
+                                        const day = String(data.getDate()).padStart(2, '0');
+                                        onChange(`${year}-${month}-${day}`);
+                                        setOpen(false);
+                                      }}
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                              </Field>
+                            );
+                          }}
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* 자기소개 */}
+                  <div className='space-y-3'>
+                    <Label className='flex items-center gap-2 text-lg font-semibold'>
+                      <PenLine className='size-4 text-orange-500' />
+                      자기소개
+                    </Label>
+                    <Field data-invalid={!!errors.description}>
+                      <Textarea
+                        aria-invalid={!!errors.description}
+                        className='min-h-[150px] resize-none bg-gray-50/50 text-base leading-relaxed whitespace-pre-line focus-visible:ring-orange-500'
+                        placeholder='나를 표현하는 멋진 소개글을 작성해보세요!'
+                        {...register('description', { required: '필수 항목입니다.' })}
+                      />
+                      {errors.description && <FieldError errors={[errors.description]} />}
+                    </Field>
+                  </div>
+                </div>
+
+                {/* 4. 하단 버튼 액션 */}
+                <div className='mb-5 flex justify-end border-t pt-4'>
+                  <Button
+                    type='submit'
+                    size='lg'
+                    disabled={isPending}
+                    className='bg-orange-500 text-lg font-bold text-white shadow-md transition-all hover:bg-orange-300 hover:shadow-lg'>
+                    {isPending ? '저장 중...' : '수정 완료'}
                   </Button>
                 </div>
-              )}
-            />
-
-            <Field data-invalid={!!errors.name}>
-              <Input
-                aria-invalid={!!errors.name}
-                type='text'
-                {...register('name', { required: '필수 항목입니다.' })}
-                className='flex text-2xl'
-              />
-              {errors.name && <FieldError errors={[errors.name]} />}
-            </Field>
+              </FieldSet>
+            </div>
           </div>
-
-          <Field>
-            <FieldLabel className='w-32 text-xl'>희망 거주 지역</FieldLabel>
-            <RegionFieldGroup
-              region1='region1'
-              region2='region2'
-            />
-          </Field>
-          <Controller
-            control={control}
-            name='date'
-            render={({ field: { value, onChange } }) => {
-              const stringToDate = value ? new Date(value) : undefined; // 문자열 -> Date객체
-              return (
-                <Field>
-                  <FieldLabel
-                    htmlFor='date'
-                    className='w-32 text-xl'>
-                    희망 입주 시기
-                  </FieldLabel>
-                  <Popover
-                    open={open}
-                    onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant='outline'
-                        id='date'
-                        className='w-48 justify-between font-normal'>
-                        {value || '날짜를 선택해주세요.'}
-                        <ChevronDownIcon />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className='w-auto overflow-hidden p-0'
-                      align='start'>
-                      <Calendar
-                        mode='single'
-                        selected={stringToDate ?? undefined}
-                        captionLayout='dropdown'
-                        onSelect={(data) => {
-                          if (!data) {
-                            return;
-                          }
-                          // Date객체 -> 문자열
-                          const year = data.getFullYear();
-                          const month = String(data.getMonth() + 1).padStart(2, '0');
-                          const day = String(data.getDate()).padStart(2, '0');
-                          const localDateString = `${year}-${month}-${day}`;
-                          onChange(localDateString);
-                          setOpen(false);
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </Field>
-              );
-            }}
-          />
-          <FieldLabel className='text-xl'>자기소개</FieldLabel>
-          <Field data-invalid={!!errors.description}>
-            <Textarea
-              aria-invalid={!!errors.description}
-              //whitespace-pre-line :줄바꿈 문자 기준으로 실제 줄이 바뀜
-              className='whitespace-pre-line'
-              {...register('description', { required: '필수 항목입니다.' })}
-            />
-            {errors.description && <FieldError errors={[errors.description]} />}
-          </Field>
-          <Button
-            type='submit'
-            className='w-30 self-center'>
-            수정 완료
-          </Button>
-        </FieldSet>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </div>
   );
 }

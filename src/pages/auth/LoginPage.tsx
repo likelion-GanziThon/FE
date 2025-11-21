@@ -1,5 +1,5 @@
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { Field, FieldError, FieldLabel, FieldSeparator, FieldSet } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
@@ -7,6 +7,7 @@ import { useLogin } from '@/hooks/queries/useAuth';
 import { toast } from 'sonner';
 import { logOnDev } from '@/utils/logOnDev';
 import GlobalLoader from '@/components/common/GlobalLoader';
+import homeLogo from '@/assets/home.png';
 
 type FormValues = {
   id: string;
@@ -44,15 +45,23 @@ export default function LoginPage() {
 
   return (
     <div className='flex min-h-screen flex-col'>
-      <div className='px-20 py-15 text-center text-5xl'>홈메이트</div>
+      <div className='flex items-center justify-center gap-5 px-20 py-20'>
+        <img
+          src={homeLogo}
+          alt='logo'
+          className='w-15'
+        />
+        <span className='text-3xl font-bold'>홈메이트</span>
+      </div>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='px-10'>
+        className='flex flex-col gap-6 px-10'>
         <FieldSet
           className='gap-6'
           disabled={isPending}>
           <Field data-invalid={!!errors.id}>
-            <FieldLabel htmlFor='id'>아이디</FieldLabel>
+            <FieldLabel htmlFor='id'>아이디 (닉네임)</FieldLabel>
             <Input
               id='id'
               aria-invalid={!!errors.id}
@@ -74,14 +83,19 @@ export default function LoginPage() {
             {errors.password && <FieldError errors={[errors.password]} />}
           </Field>
 
-          <Button type='submit'>로그인</Button>
-          <FieldSeparator />
           <Button
-            variant={'secondary'}
-            asChild>
-            <Link to={'/sign-up'}>회원가입</Link>
+            type='submit'
+            className='bg-home-orange-600 hover:bg-home-orange-300 w-1/2 self-center font-bold'>
+            로그인
           </Button>
         </FieldSet>
+
+        <Button
+          variant={'link'}
+          className='relative h-auto self-center p-0 font-normal no-underline after:absolute after:bottom-0 after:left-1/2 after:h-[1px] after:w-0 after:-translate-x-1/2 after:bg-current after:transition-[width] after:duration-300 after:ease-in-out hover:no-underline hover:after:w-full'
+          asChild>
+          <Link to={'/sign-up'}>계정이 없으신가요?</Link>
+        </Button>
       </form>
     </div>
   );

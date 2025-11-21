@@ -11,8 +11,8 @@ export default function MessageInputBar({ placeholder, name }: MessageInputBarPr
   const { register } = useFormContext();
 
   return (
-    <div className='fixed bottom-0 w-full max-w-175 px-4 pb-4'>
-      <InputGroup>
+    <div className='fixed bottom-0 w-full max-w-175 px-4 py-2 pb-4'>
+      <InputGroup className='border-home-orange-300 border-2'>
         <InputGroupInput
           placeholder={placeholder}
           type='text'
@@ -22,7 +22,7 @@ export default function MessageInputBar({ placeholder, name }: MessageInputBarPr
           <button
             type='submit' // 부모 폼하고 연결
           >
-            <Send className='size-6 text-blue-500' />
+            <Send className='text-home-orange-300 size-6' />
           </button>
         </InputGroupAddon>
       </InputGroup>
