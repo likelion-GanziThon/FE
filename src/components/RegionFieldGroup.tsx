@@ -6,9 +6,16 @@ import { REGION_1_OPTIONS, REGIONS } from '@/constants/regions';
 interface RegionFieldGroupProps {
   region1: string;
   region2: string;
+  requiredRegion1?: boolean;
+  requiredRegion2?: boolean;
 }
 
-export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupProps) {
+export default function RegionFieldGroup({
+  region1,
+  region2,
+  requiredRegion1 = true,
+  requiredRegion2 = true,
+}: RegionFieldGroupProps) {
   const { control, setValue } = useFormContext();
 
   // 시/도 드롭다운 value를 추적
@@ -22,7 +29,7 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
       <Controller
         control={control}
         name={region1}
-        rules={{ required: '시/도를 선택해주세요.' }}
+        rules={requiredRegion1 ? { required: '시/도를 선택해주세요.' } : undefined}
         render={({ field, fieldState: { error } }) => (
           <Field data-invalid={!!error}>
             <Select
@@ -55,7 +62,7 @@ export default function RegionFieldGroup({ region1, region2 }: RegionFieldGroupP
       <Controller
         control={control}
         name={region2}
-        rules={{ required: '구/군을 선택해주세요.' }}
+        rules={requiredRegion2 ? { required: '구/군을 선택해주세요.' } : undefined}
         render={({ field, fieldState: { error } }) => (
           <Field data-invalid={!!error}>
             <Select
