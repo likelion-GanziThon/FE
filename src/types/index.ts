@@ -82,3 +82,11 @@ export interface User extends ProfileFields {
   nickname: string;
   profileImageUrl: string;
 }
+// 댓글 타입
+export interface Comment {
+  content: string;
+  createdAt: string;
+  id: number;
+  updatedAt: string;
+  userId: number;
+}
