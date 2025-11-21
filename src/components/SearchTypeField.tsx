@@ -21,8 +21,8 @@ export default function SearchTypeField() {
               <SelectValue placeholder='검색할 타입을 정하세요.' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='title'>제목</SelectItem>
-              <SelectItem value='content'>내용</SelectItem>
+              <SelectItem value='TITLE'>제목</SelectItem>
+              <SelectItem value='CONTENT'>내용</SelectItem>
             </SelectContent>
           </Select>
         </Field>
