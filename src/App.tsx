@@ -45,7 +45,7 @@ function App() {
             { path: 'post-create', element: <PostCreatePage /> },
 
             { path: 'profile/:userId/update', element: <ProfileUpdatePage /> },
-            { path: 'post/:category/:id', element: <PostDetailPage /> },
+            { path: 'post/:category/:PostId', element: <PostDetailPage /> },
           ],
         },
 
