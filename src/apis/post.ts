@@ -108,5 +108,6 @@ export const getDetailPost = async ({
   id,
 }: GetPostDetailRequest): Promise<PostDetail> => {
   const { data } = await axiosInstance.get(`/api/posts/${category}/${id}`);
+  console.log(data);
   return data;
 };

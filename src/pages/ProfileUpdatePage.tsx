@@ -8,7 +8,7 @@ import { Field, FieldError, FieldLabel, FieldSet } from '@/components/ui/field';
 import RegionFieldGroup from '@/components/RegionFieldGroup';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useGetMe, useUpdateProfile } from '@/hooks/queries/useProfile';
 import { toast } from 'sonner';
@@ -64,6 +64,7 @@ export default function ProfileUpdatePage() {
     register,
     formState: { errors },
     setValue,
+    reset,
   } = profileUpdateForm;
 
   const previewImage = useWatch({ control, name: 'previewImage' });
@@ -77,10 +78,24 @@ export default function ProfileUpdatePage() {
       introduction: values.description,
       profileImageUrl: values.image,
     };
-    console.log(body);
 
     updateProfile(body);
   };
+  useEffect(() => {
+    if (user) {
+      const areaParts = user.desiredArea?.split(' ') || [];
+
+      reset({
+        image: null, // 파일은 서버에서 받을 수 없으므로 null 유지
+        previewImage: `${import.meta.env.VITE_API_URL}${user.profileImageUrl}`,
+        name: user.nickname,
+        region1: areaParts[0] || '',
+        region2: areaParts[1] || '',
+        date: user.desiredMoveInDate,
+        description: user.introduction,
+      });
+    }
+  }, [user, reset]);
 
   if (isLoading || !user) return <GlobalLoader />;
 

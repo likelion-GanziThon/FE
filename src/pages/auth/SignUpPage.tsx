@@ -10,7 +10,6 @@ import { toast } from 'sonner';
 type FormValues = {
   id: string;
   password: string;
-  name: string;
 };
 
 export default function SignUpPage() {
@@ -23,7 +22,6 @@ export default function SignUpPage() {
     defaultValues: {
       id: '',
       password: '',
-      name: '',
     },
     mode: 'onChange',
   });
@@ -74,18 +72,6 @@ export default function SignUpPage() {
               {...register('password', { required: '필수 항목입니다.' })}
             />
             {errors.password && <FieldError errors={[errors.password]} />}
-          </Field>
-
-          <Field data-invalid={!!errors.name}>
-            <FieldLabel htmlFor='name'>이름</FieldLabel>
-            <Input
-              id='name'
-              placeholder='이름을 입력해주세요.'
-              aria-invalid={!!errors.name}
-              type='text'
-              {...register('name', { required: '필수 항목입니다.' })}
-            />
-            {errors.name && <FieldError errors={[errors.name]} />}
           </Field>
 
           <Button type='submit'>회원가입</Button>

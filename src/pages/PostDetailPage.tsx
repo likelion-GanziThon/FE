@@ -9,28 +9,62 @@ import type { PostCategory } from '@/types';
 import GlobalLoader from '@/components/common/GlobalLoader';
 import { useGetMe } from '@/hooks/queries/useProfile';
 import { useCreateComment } from '@/hooks/queries/useComment';
+import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
+import { useCreateLike } from '@/hooks/queries/useLike';
+
+import { queryClient } from '@/apis/queryClient';
+import { QUERY_KEYS } from '@/constants/queryKeys';
+
+interface CommentFormValues {
+  content: string;
+}
 
 export default function PostDetailPage() {
   const { category, PostId } = useParams();
   const { mutate: createComment } = useCreateComment();
-  const { data: user } = useGetMe();
+  const { data: user, isLoading: isUserLoding } = useGetMe();
   const { data: post, isLoading } = useGetDetailPost({
     category: category as PostCategory,
     id: Number(PostId),
   });
+  const { mutate: createLike } = useCreateLike({
+    onSuccess: () => {
+      if (post) {
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.post.detail(category as PostCategory, post.id),
+        });
+      }
+    },
+  });
+  const commentForm = useForm<CommentFormValues>({
+    defaultValues: {
+      content: '',
+    },
+  });
 
   //댓글 작성
-  const handleSubmit = (content: string) => {
-    createComment({ category: category as PostCategory, id: Number(PostId), content });
+  const onSubmit: SubmitHandler<CommentFormValues> = (values) => {
+    createComment({
+      category: category as PostCategory,
+      id: Number(PostId),
+      content: values.content,
+    });
+    commentForm.resetField('content'); // 댓글 비우기
   };
 
-  if (isLoading || !post) return <GlobalLoader />;
+  //좋아요
+  const handleLike = () => {
+    if (post) {
+      createLike({ category: post?.category, id: post?.id });
+    }
+  };
+
+  if (isLoading || !post || isUserLoding || !user) return <GlobalLoader />;
 
   return (
     <div className='p-4 pb-20'>
       {post.userId === user?.id && (
         <header className='flex justify-end gap-3'>
-          <Button>수정</Button>
           <Button variant={'destructive'}>삭제</Button>
         </header>
       )}
@@ -39,8 +73,8 @@ export default function PostDetailPage() {
         <span className='text-2xl'>{post?.title}</span>
         <div className='my-4 flex items-center justify-between border-b-2 pb-4'>
           <ProfileItem
-            name={post?.title}
-            imageUrl=''
+            name={post?.writerLoginId}
+            imageUrl={`${import.meta.env.VITE_API_URL}${post?.writerProfileImagePath}`}
             userId={post?.userId}
           />
           {category === 'ROOMMATE' && (
@@ -49,10 +83,15 @@ export default function PostDetailPage() {
             </Button>
           )}
 
-          <div className='flex items-center gap-2'>
-            <Heart fill='black' />
+          <button
+            className='flex items-center gap-2'
+            onClick={handleLike}>
+            <Heart
+              color={post?.likedByMe ? 'red' : 'black'}
+              fill={post?.likedByMe ? 'red' : 'transparent'}
+            />
             <span>{post?.likeCount}</span>
-          </div>
+          </button>
         </div>
       </div>
       <section className='pb-30'>
@@ -76,15 +115,24 @@ export default function PostDetailPage() {
         {post.comments.map((comment) => (
           <CommentCard
             key={comment.id}
-            name={String(comment.userId)}
-            imageUrl=''
+            name={comment.writerLoginId}
+            imageUrl={`${import.meta.env.VITE_API_URL}${comment.writerProfileImagePath}`}
             userId={comment.userId}
             content={comment.content}
+            commentId={comment.id}
+            category={post.category}
+            postId={post.id}
           />
         ))}
       </div>
-
-      <MessageInputBar onSubmit={handleSubmit} />
+      <FormProvider {...commentForm}>
+        <form onSubmit={commentForm.handleSubmit(onSubmit)}>
+          <MessageInputBar
+            name='content'
+            placeholder='댓글 작성'
+          />
+        </form>
+      </FormProvider>
     </div>
   );
 }
