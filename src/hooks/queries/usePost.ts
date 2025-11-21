@@ -1,7 +1,14 @@
-import { createPost, deletePost, getPosts, updatePost } from '@/apis/post';
+import {
+  createPost,
+  deletePost,
+  getDetailPost,
+  getMainPosts,
+  getPosts,
+  updatePost,
+} from '@/apis/post';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { Filters, PostCategory, UseMutationCallback } from '@/types';
+import type { Filters, GetPostDetailRequest, PostCategory, UseMutationCallback } from '@/types';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 
 //토스트, 라우팅 등은 외부에서 주입
@@ -76,10 +83,24 @@ export function useDeletePost(callbacks?: UseMutationCallback) {
   });
 }
 
-export function usePosts(category: PostCategory, page: number, size?: number, filters?: Filters) {
+export function useGetPosts(category: PostCategory, filters?: Filters) {
   return useQuery({
-    queryFn: () => getPosts({ category, page, size, filters }),
-    queryKey: QUERY_KEYS.post.list(category, size, page, filters),
+    queryFn: () => getPosts({ category, filters }),
+    queryKey: QUERY_KEYS.post.category(category, filters),
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useGetMainPosts() {
+  return useQuery({
+    queryFn: getMainPosts,
+    queryKey: QUERY_KEYS.post.main(),
+  });
+}
+
+export function useGetDetailPost({ category, id }: GetPostDetailRequest) {
+  return useQuery({
+    queryFn: () => getDetailPost({ category, id }),
+    queryKey: QUERY_KEYS.post.detail(category, id),
   });
 }

@@ -1,12 +1,16 @@
 import GlobalLoader from '@/components/common/GlobalLoader';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useGetMe } from '@/hooks/queries/useProfile';
+import { useGetMe, useGetOtherProfile } from '@/hooks/queries/useProfile';
 
-import { Link } from 'react-router';
+import { Link, useParams } from 'react-router';
 
 export default function ProfilePage() {
-  const { data: user, isPending } = useGetMe();
+  const { userId } = useParams();
+
+  const { data: user } = useGetOtherProfile(Number(userId));
+
+  const { data: me, isPending } = useGetMe();
 
   if (isPending) return <GlobalLoader />;
   return (
@@ -47,9 +51,11 @@ export default function ProfilePage() {
         </p>
       </div>
 
-      <Button className='w-30 self-center'>
-        <Link to={`/profile/${user?.id}/update`}>수정하기</Link>
-      </Button>
+      {me?.id === user?.id && (
+        <Button className='w-30 self-center'>
+          <Link to={`/profile/${user?.id}/update`}>수정하기</Link>
+        </Button>
+      )}
     </div>
   );
 }
