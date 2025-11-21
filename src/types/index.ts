@@ -36,6 +36,7 @@ export interface Post {
   createdAt: string;
   commentCount: number;
   thumbnailUrl?: string;
+  writerLoginId?: string;
 }
 
 // 게시글 목록 조회 응답 타입

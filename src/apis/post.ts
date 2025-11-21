@@ -9,6 +9,7 @@ import type {
   PostDetail,
   UpdatePostRequest,
 } from '@/types';
+import { logOnDev } from '@/utils/logOnDev';
 
 //게시글 생성 요청
 export const createPost = async (body: CreatePostRequest): Promise<void> => {
@@ -108,6 +109,6 @@ export const getDetailPost = async ({
   id,
 }: GetPostDetailRequest): Promise<PostDetail> => {
   const { data } = await axiosInstance.get(`/api/posts/${category}/${id}`);
-  console.log(data);
+  logOnDev(data);
   return data;
 };

@@ -15,7 +15,7 @@ function PostCard({ category, post }: PostCardProps) {
       <Card className='flex-row justify-between'>
         <CardContent className='flex flex-col gap-1'>
           <div className='text-2xl font-semibold'>{post.title}</div>
-          <div className='text-muted-foreground'>{}</div>
+          <div className='text-muted-foreground'>{post.writerLoginId}</div>
 
           <div className='flex items-center gap-8'>
             <div className='flex items-center gap-2'>
