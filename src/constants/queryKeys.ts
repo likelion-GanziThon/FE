@@ -3,14 +3,14 @@ import type { Filters, PostCategory } from '@/types';
 export const QUERY_KEYS = {
   post: {
     all: ['post'],
-    main: () => ['post', 'main'],
+    main: () => ['post', 'list', 'main'],
     lists: () => ['post', 'list'], // 게시글 리스트 (글을 새로 만들었을 때 초기화)
     //필터링된 리스트
-    list: (category: PostCategory, size?: number, page?: number, filters?: Filters) => [
+    category: (category: PostCategory, filters?: Filters) => [
       'post',
       'list',
       category,
-      { page, size, ...filters },
+      { ...(filters ?? {}) },
     ],
     details: () => ['post', 'detail'],
     detail: (category: PostCategory, id: number) => ['post', 'detail', category, id],

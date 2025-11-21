@@ -2,8 +2,11 @@ import { axiosInstance } from '@/apis/axiosInstance';
 import type {
   CreatePostRequest,
   Filters,
+  GetPostDetailRequest,
   GetPostsResponse,
+  Post,
   PostCategory,
+  PostDetail,
   UpdatePostRequest,
 } from '@/types';
 
@@ -77,12 +80,33 @@ interface GetPostsVariables {
 //게시글 조회 요청
 export const getPosts = async ({
   category,
-  page,
+  page = 0,
   size = 20,
   filters,
 }: GetPostsVariables): Promise<GetPostsResponse> => {
   const { data } = await axiosInstance.get(`/api/posts/${category}`, {
     params: { size, page, ...filters },
   });
+  return data;
+};
+
+interface GetMainPostsResponse {
+  roommate: Post[];
+  free: Post[];
+  policy: Post[];
+}
+
+//메인페이지 게시글 조회
+export const getMainPosts = async (): Promise<GetMainPostsResponse> => {
+  const { data } = await axiosInstance.get('/api/posts/main');
+  return data;
+};
+
+// 게시글 상세 조회
+export const getDetailPost = async ({
+  category,
+  id,
+}: GetPostDetailRequest): Promise<PostDetail> => {
+  const { data } = await axiosInstance.get(`/api/posts/${category}/${id}`);
   return data;
 };

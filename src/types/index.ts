@@ -61,6 +61,15 @@ export interface Filters {
   sigungu?: string;
 }
 
+export interface GetPostDetailRequest {
+  category: PostCategory;
+  id: number;
+}
+
+export interface CreateCommentRequest extends GetPostDetailRequest {
+  content: string;
+}
+
 // mutation 훅 콜백 함수 타입
 export type UseMutationCallback = {
   onSuccess?: () => void;
@@ -82,6 +91,7 @@ export interface User extends ProfileFields {
   nickname: string;
   profileImageUrl: string;
 }
+
 // 댓글 타입
 export interface Comment {
   content: string;
@@ -89,4 +99,19 @@ export interface Comment {
   id: number;
   updatedAt: string;
   userId: number;
+}
+export interface PostDetail {
+  id: number;
+  title: string;
+  content: string;
+  userId: number;
+  viewCount: number;
+  createdAt: string;
+  category: PostCategory;
+  imageUrls: string[];
+  openchatUrl: string | null;
+  likeCount: number;
+  likedByMe: boolean;
+  commentCount: number;
+  comments: Comment[];
 }
