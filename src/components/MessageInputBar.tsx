@@ -11,7 +11,7 @@ export default function MessageInputBar({ placeholder, name }: MessageInputBarPr
   const { register } = useFormContext();
 
   return (
-    <div className='fixed bottom-0 w-full max-w-175 px-4 py-2 pb-4'>
+    <div className='fixed bottom-0 w-full max-w-175 bg-white px-4 py-2 pb-4'>
       <InputGroup className='border-home-orange-300 border-2'>
         <InputGroupInput
           placeholder={placeholder}
