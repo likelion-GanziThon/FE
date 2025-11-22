@@ -40,7 +40,7 @@ export default function ProfileUpdatePage() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const { data: user, isLoading } = useGetMe();
-  const { mutate: updateProfile, isPending } = useUpdateProfile({
+  const { mutate: updateProfile, isPending } = useUpdateProfile(user?.id, {
     onSuccess: () => {
       toast.success('프로필 정보가 수정되었습니다.', { position: 'bottom-center' });
       if (user?.id) {

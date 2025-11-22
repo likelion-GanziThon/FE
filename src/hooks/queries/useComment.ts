@@ -1,7 +1,7 @@
 import { createComment, deleteComment } from '@/apis/comment';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { CreateCommentRequest, UseMutationCallback } from '@/types';
+import type { CreateCommentRequest, PostCategory, UseMutationCallback } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 
 export function useCreateComment(callbacks?: UseMutationCallback) {
@@ -35,10 +35,20 @@ export function useCreateComment(callbacks?: UseMutationCallback) {
   });
 }
 
+interface DeleteCommentParams {
+  commentId: number;
+  category: PostCategory;
+  postId: number;
+}
+
 export function useDeleteComment(callbacks?: UseMutationCallback) {
   return useMutation({
-    mutationFn: (commentId: number) => deleteComment(commentId),
-    onSuccess: () => {
+    mutationFn: ({ commentId }: DeleteCommentParams) => deleteComment(commentId),
+    onSuccess: (_, { postId, category }) => {
+      queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.post.detail(category, postId),
+      });
+
       if (callbacks?.onSuccess) {
         callbacks.onSuccess();
       }

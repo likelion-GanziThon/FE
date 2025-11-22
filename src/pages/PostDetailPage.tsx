@@ -12,9 +12,6 @@ import { useCreateComment } from '@/hooks/queries/useComment';
 import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import { useCreateLike } from '@/hooks/queries/useLike';
 
-import { queryClient } from '@/apis/queryClient';
-import { QUERY_KEYS } from '@/constants/queryKeys';
-
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 
@@ -38,15 +35,7 @@ export default function PostDetailPage() {
     id: Number(PostId),
   });
 
-  const { mutate: createLike } = useCreateLike({
-    onSuccess: () => {
-      if (post) {
-        queryClient.invalidateQueries({
-          queryKey: QUERY_KEYS.post.detail(category as PostCategory, post.id),
-        });
-      }
-    },
-  });
+  const { mutate: createLike } = useCreateLike();
 
   const commentForm = useForm<CommentFormValues>({
     defaultValues: {

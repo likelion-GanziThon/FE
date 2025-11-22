@@ -1,7 +1,6 @@
-import { queryClient } from '@/apis/queryClient';
 import ProfileItem from '@/components/common/ProfileItem';
 import { Button } from '@/components/ui/button';
-import { QUERY_KEYS } from '@/constants/queryKeys';
+
 import { useDeleteComment } from '@/hooks/queries/useComment';
 import { useGetMe } from '@/hooks/queries/useProfile';
 import type { PostCategory } from '@/types';
@@ -32,9 +31,6 @@ export default function CommentCard({
   const { mutate: deleteComment, isPending } = useDeleteComment({
     onSuccess: () => {
       toast.success('댓글이 삭제되었습니다.', { position: 'bottom-center' });
-      queryClient.invalidateQueries({
-        queryKey: QUERY_KEYS.post.detail(category, postId),
-      });
     },
     onError: () => {
       toast.error('댓글 삭제에 실패했습니다.');
@@ -43,7 +39,8 @@ export default function CommentCard({
 
   const handleDelete = () => {
     if (window.confirm('정말 이 댓글을 삭제하시겠습니까?')) {
-      deleteComment(commentId);
+      // 쿼리 무효화를 위해 함꼐 보낸다.
+      deleteComment({ category: category as PostCategory, postId: Number(postId), commentId });
     }
   };
 

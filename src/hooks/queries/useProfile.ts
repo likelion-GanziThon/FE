@@ -11,10 +11,11 @@ export function useGetMe() {
     staleTime: 1000 * 60 * 60, // 1시간 동안 캐시 데이터 사용 (전역 상태 효과)
     gcTime: 1000 * 60 * 60 * 24,
     refetchOnWindowFocus: false, // 탭 전환할 때마다 재요청 안 함
+    retry: 0,
   });
 }
 
-export function useUpdateProfile(callbacks?: UseMutationCallback) {
+export function useUpdateProfile(userId?: number, callbacks?: UseMutationCallback) {
   return useMutation({
     //mutationFn은 인자 하나(variables)만 받는 함수여야 한다
     mutationFn: updateProfile,
@@ -23,6 +24,11 @@ export function useUpdateProfile(callbacks?: UseMutationCallback) {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.auth.me(),
       });
+      if (userId) {
+        queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.auth.userProfile(userId),
+        });
+      }
       if (callbacks?.onSuccess) {
         // 외부에서 커스텀 콜백
         callbacks.onSuccess();
