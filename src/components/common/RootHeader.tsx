@@ -45,7 +45,7 @@ const nav = [
     icon: Search,
   },
   {
-    label: '커뮤니티',
+    label: '자유 게시판',
     path: '/community',
     icon: Users,
   },

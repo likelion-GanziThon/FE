@@ -90,7 +90,7 @@ export default function HomePage() {
             <CardHeader className=''>
               <CardTitle className='flex items-center gap-1'>
                 <Users />
-                커뮤니티 게시판
+                자유 게시판
               </CardTitle>
               <CardDescription>
                 공공 데이터로 안 보이는 생활 정보와 솔직한 후기를 자유롭게 나눠요.
