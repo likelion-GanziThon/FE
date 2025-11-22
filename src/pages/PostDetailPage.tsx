@@ -4,7 +4,7 @@ import { Heart, Trash2, ChevronLeft, MessageCircle } from 'lucide-react';
 import ProfileItem from '@/components/common/ProfileItem';
 import CommentCard from '@/components/CommentCard';
 import MessageInputBar from '@/components/MessageInputBar';
-import { useGetDetailPost } from '@/hooks/queries/usePost';
+import { useDeletePost, useGetDetailPost } from '@/hooks/queries/usePost';
 import type { PostCategory } from '@/types';
 import GlobalLoader from '@/components/common/GlobalLoader';
 import { useGetMe } from '@/hooks/queries/useProfile';
@@ -16,6 +16,7 @@ import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 interface CommentFormValues {
   content: string;
@@ -24,6 +25,12 @@ interface CommentFormValues {
 export default function PostDetailPage() {
   const navigate = useNavigate();
   const { category, PostId } = useParams();
+  const { mutate: deletePost } = useDeletePost({
+    onSuccess: () => {
+      toast.success('게시글이 삭제되었습니다.', { position: 'bottom-center' });
+      navigate('/');
+    },
+  });
   const { mutate: createComment } = useCreateComment();
   const { data: user, isLoading: isUserLoding } = useGetMe();
   const { data: post, isLoading } = useGetDetailPost({
@@ -64,6 +71,11 @@ export default function PostDetailPage() {
     }
   };
 
+  // 게시글 삭제
+  const handleDelete = () => {
+    deletePost({ category: category as PostCategory, id: Number(PostId) });
+  };
+
   if (isLoading || !post || isUserLoding || !user) return <GlobalLoader />;
 
   const categoryLabel =
@@ -88,7 +100,8 @@ export default function PostDetailPage() {
             <Button
               variant={'ghost'}
               size='icon'
-              className='text-gray-400 hover:bg-red-50 hover:text-red-500'>
+              className='text-gray-400 hover:bg-red-50 hover:text-red-500'
+              onClick={handleDelete}>
               <Trash2 className='size-5' />
             </Button>
           )}
