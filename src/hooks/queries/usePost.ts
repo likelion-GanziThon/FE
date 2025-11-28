@@ -102,7 +102,7 @@ export function useGetMainPosts() {
 
 export function useGetDetailPost({ category, id }: GetPostDetailRequest) {
   return useQuery({
-    queryFn: () => getDetailPost({ category, id }),
+    queryFn: () => getDetailPost({ category, id })
     queryKey: QUERY_KEYS.post.detail(category, id),
   });
 }
