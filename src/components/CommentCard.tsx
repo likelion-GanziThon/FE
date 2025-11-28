@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 
 import { useDeleteComment } from '@/hooks/queries/useComment';
 import { useGetMe } from '@/hooks/queries/useProfile';
-import type { PostCategory } from '@/types';
+import type { PostCategory } from '@/types/post.type';
+
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 

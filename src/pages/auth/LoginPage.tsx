@@ -26,11 +26,12 @@ export default function LoginPage() {
     },
     mode: 'onChange',
   });
+
   const { mutate: login, isPending } = useLogin({
     onSuccess: () => {
       toast.success('환영합니다.', { position: 'top-center' });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       logOnDev(error.message);
       toast.error('아이디, 비밀번호를 확인해주세요.', { position: 'top-center' });
     },
@@ -83,16 +84,10 @@ export default function LoginPage() {
             {errors.password && <FieldError errors={[errors.password]} />}
           </Field>
 
-          <Button
-            type='submit'
-            className='bg-home-orange-600 hover:bg-home-orange-300 w-1/2 self-center font-bold'>
-            로그인
-          </Button>
+          <Button type='submit'>로그인</Button>
         </FieldSet>
-
         <Button
           variant={'link'}
-          className='relative h-auto self-center p-0 font-normal no-underline after:absolute after:bottom-0 after:left-1/2 after:h-[1px] after:w-0 after:-translate-x-1/2 after:bg-current after:transition-[width] after:duration-300 after:ease-in-out hover:no-underline hover:after:w-full'
           asChild>
           <Link to={'/sign-up'}>계정이 없으신가요?</Link>
         </Button>

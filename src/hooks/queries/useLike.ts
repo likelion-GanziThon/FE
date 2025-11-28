@@ -1,7 +1,9 @@
 import { createLike } from '@/apis/like';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { GetPostDetailRequest, UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+import type { GetPostDetailRequest } from '@/types/post.type';
+
 import { useMutation } from '@tanstack/react-query';
 
 export function useCreateLike(callbacks?: UseMutationCallback) {

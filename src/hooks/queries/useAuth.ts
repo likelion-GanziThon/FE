@@ -2,7 +2,8 @@ import { postLogin, postSignup } from '@/apis/auth';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
 import { useSetLoggedIn } from '@/store/authStore';
-import type { UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+
 import { useMutation } from '@tanstack/react-query';
 
 export function useSignup(callbacks?: UseMutationCallback) {

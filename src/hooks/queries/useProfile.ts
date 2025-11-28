@@ -1,7 +1,8 @@
 import { getMe, getOtherProfile, updateProfile } from '@/apis/profile';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function useGetMe() {

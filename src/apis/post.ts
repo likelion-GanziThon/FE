@@ -1,14 +1,15 @@
 import { axiosInstance } from '@/apis/axiosInstance';
 import type {
   CreatePostRequest,
-  Filters,
+  DeletePostVariables,
+  GetMainPostsResponse,
   GetPostDetailRequest,
   GetPostsResponse,
-  Post,
-  PostCategory,
+  GetPostsVariables,
   PostDetail,
-  UpdatePostRequest,
-} from '@/types';
+  UpdatePostVariables,
+} from '@/types/post.type';
+
 import { logOnDev } from '@/utils/logOnDev';
 
 //게시글 생성 요청
@@ -29,12 +30,6 @@ export const createPost = async (body: CreatePostRequest): Promise<void> => {
 
   await axiosInstance.post('/api/posts', formData);
 };
-
-interface UpdatePostVariables {
-  id: number;
-  currentCategory: PostCategory;
-  body: UpdatePostRequest;
-}
 
 //게시글 수정 요청
 export const updatePost = async ({
@@ -61,22 +56,10 @@ export const updatePost = async ({
   });
 };
 
-interface DeletePostVariables {
-  category: PostCategory;
-  id: number;
-}
-
 //게시글 삭제 요청
 export const deletePost = async ({ category, id }: DeletePostVariables): Promise<void> => {
   await axiosInstance.delete(`/api/posts/${category}/${id}`);
 };
-
-interface GetPostsVariables {
-  category: PostCategory;
-  page?: number;
-  size?: number;
-  filters?: Filters;
-}
 
 //게시글 조회 요청
 export const getPosts = async ({
@@ -90,12 +73,6 @@ export const getPosts = async ({
   });
   return data;
 };
-
-interface GetMainPostsResponse {
-  roommate: Post[];
-  free: Post[];
-  policy: Post[];
-}
 
 //메인페이지 게시글 조회
 export const getMainPosts = async (): Promise<GetMainPostsResponse> => {

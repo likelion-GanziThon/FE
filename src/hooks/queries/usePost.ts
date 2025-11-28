@@ -8,7 +8,9 @@ import {
 } from '@/apis/post';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { Filters, GetPostDetailRequest, PostCategory, UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+import type { Filters, GetPostDetailRequest, PostCategory } from '@/types/post.type';
+
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 
 //토스트, 라우팅 등은 외부에서 주입

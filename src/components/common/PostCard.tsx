@@ -1,8 +1,8 @@
 import { Card } from '@/components/ui/card';
+import type { Post, PostCategory } from '@/types/post.type';
 import { Eye } from 'lucide-react';
 import { MessageSquareText } from 'lucide-react';
 import { Link } from 'react-router';
-import type { Post, PostCategory } from '@/types';
 
 interface PostCardProps {
   post: Post;

@@ -1,15 +1,11 @@
 import { axiosInstance } from '@/apis/axiosInstance';
-import type { ProfileFields, User } from '@/types';
+import type { UpdateProfile, User } from '@/types/user.type';
 
 // 내 정보 조회
 export const getMe = async (): Promise<User> => {
   const { data } = await axiosInstance.get('/api/profile/me');
   return data;
 };
-
-export interface UpdateProfile extends ProfileFields {
-  profileImageUrl?: File | null;
-}
 
 // 내 정보 수정 (이미지 있음)
 export const updateProfile = async (body: UpdateProfile): Promise<User> => {

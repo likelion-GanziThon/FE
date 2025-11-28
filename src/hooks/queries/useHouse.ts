@@ -1,5 +1,6 @@
 import { getHouseRegion1, getHouseRegion2, postRecommend } from '@/apis/house';
-import type { UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export function useGetRegion1() {

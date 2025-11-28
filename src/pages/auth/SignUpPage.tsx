@@ -32,7 +32,7 @@ export default function SignUpPage() {
       // 로그인 페이지로 이동
       navigate('/login', { replace: true });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       logOnDev(error.message);
       toast.error('회원가입 중 문제가 발생하였습니다.', { position: 'top-center' });
     },

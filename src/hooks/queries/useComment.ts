@@ -1,7 +1,9 @@
 import { createComment, deleteComment } from '@/apis/comment';
 import { queryClient } from '@/apis/queryClient';
 import { QUERY_KEYS } from '@/constants/queryKeys';
-import type { CreateCommentRequest, PostCategory, UseMutationCallback } from '@/types';
+import type { UseMutationCallback } from '@/types/common.type';
+import type { CreateCommentRequest, PostCategory } from '@/types/post.type';
+
 import { useMutation } from '@tanstack/react-query';
 
 export function useCreateComment(callbacks?: UseMutationCallback) {

@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/apis/axiosInstance';
-import type { HousingRecommendationResponse } from '@/types';
+import type { PostRecommendRequest, RecommendationItem } from '@/types/housing.type';
 
 export const getHouseRegion1 = async () => {
   const { data } = await axiosInstance.get('/api/housing/sido');
@@ -14,15 +14,11 @@ export const getHouseRegion2 = async (sidoName: string) => {
   return data;
 };
 
-interface PostRecommendRequest {
-  sido: string;
-  districts: string[];
-  prompt: string;
-}
-
 export const postRecommend = async (
   body: PostRecommendRequest
-): Promise<HousingRecommendationResponse> => {
+): Promise<{
+  recommendations: RecommendationItem[];
+}> => {
   const { data } = await axiosInstance.post('/api/housing/recommend/v2', body);
   return data;
 };

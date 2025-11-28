@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/apis/axiosInstance';
-import type { AuthRequest } from '@/types';
+import type { AuthRequest } from '@/types/user.type';
 
 // 회원가입
 export const postSignup = async (body: AuthRequest): Promise<void> => {

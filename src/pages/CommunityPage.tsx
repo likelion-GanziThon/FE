@@ -6,10 +6,11 @@ import SearchTextField from '@/components/SearchTextField';
 import RegionFieldGroup from '@/components/RegionFieldGroup';
 import { useGetPosts } from '@/hooks/queries/usePost';
 import PostCard from '@/components/common/PostCard'; // 사용자가 지정한 경로 유지
-import type { Filters } from '@/types';
+
 import { useState } from 'react';
 import { MessageSquare, SlidersHorizontal, Search, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import type { Filters } from '@/types/post.type';
 
 // 폼 타입
 export type CommunityFormValues = {
